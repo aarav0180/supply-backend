@@ -23,20 +23,25 @@ exports.requireSignin = (req, res, next) => {
   });
 };
 
-// Get all projects
-exports.list = (req, res) => {
-  console.log('Fetching all projects...');
-  Project.find().exec((err, data) => {
-    if (err) {
-      console.log('Error fetching projects:', err);
-      return res.status(400).json({
-        error: errorHandler(err)
-      });
+// Get all projects for a specific user (as creator and as contributor)
+exports.list = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+  
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+      }
+  
+      const asCreator = await Project.find({ creator: userId });
+      const asContributor = await Project.find({ contributors: userId });
+  
+      res.json({ asCreator, asContributor });
+    } catch (err) {
+      console.error('Error fetching projects by user:', err);
+      res.status(500).json({ error: 'Failed to fetch user projects' });
     }
-    console.log('Fetched projects:', data); // Log the fetched projects
-    res.json(data);
-  });
-};
+  };
+  
 
 // Create a new project
 exports.create = (req, res) => {

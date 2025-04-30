@@ -10,24 +10,17 @@ const {
 } = require('../controllers/projectController');
 const { userById } = require('../controllers/authController');
 
-// Param middleware for user and project ID
+// Param middleware
 router.param('projectId', projectById);
 router.param('userId', userById);
 
-// Routes
-router.get('/projects', requireSignin, (req, res, next) => {
-  console.log('GET /projects - Start');
-  list(req, res, next);
-});                // GET all projects
+// GET projects for a user (as creator and contributor)
+router.get('/projects/:userId', requireSignin, list);
 
-router.post('/project/create/:userId', requireSignin, (req, res, next) => {
-  console.log('POST /project/create/:userId - Start');
-  create(req, res, next);
-});  // POST create a project
+// Create a new project
+router.post('/project/create/:userId', requireSignin, create);
 
-router.delete('/project/:projectId', requireSignin, (req, res, next) => {
-  console.log('DELETE /project/:projectId - Start');
-  remove(req, res, next);
-});    // DELETE remove a project
+// Delete a project
+router.delete('/project/:projectId', requireSignin, remove);
 
 module.exports = router;

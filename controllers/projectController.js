@@ -24,6 +24,19 @@ exports.requireSignin = (req, res, next) => {
   });
 };
 
+//middlewate: get project by ID
+exports.projectById = (req, res, next, id) => {
+    Project.findById(id).exec((err, project) => {
+      if (err || !project) {
+        return res.status(400).json({
+          error: 'Project not found'
+        });
+      }
+      req.project = project;
+      next();
+    });
+  };
+
 // Get all projects for a specific user (as creator and as contributor)
 exports.list = async (req, res) => {
     try {

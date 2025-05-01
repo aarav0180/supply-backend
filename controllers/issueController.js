@@ -136,3 +136,44 @@ exports.updateIssue = (req, res) => {
     res.json(issue);
   });
 };
+
+
+// 🔽 Download issue as a TXT file
+exports.downloadIssueAsTxt = (req, res) => {
+  if (!req.cookies.user) {
+    console.log('❌ Unauthorized download attempt');
+    return res.status(401).json({ error: 'User is not authenticated' });
+  }
+
+  const { issueId } = req.params;
+  const project = req.project;
+  const issue = project.issues.id(issueId);
+
+  if (!issue) {
+    console.log('⚠️ Issue not found for download:', issueId);
+    return res.status(404).json({ error: 'Issue not found' });
+  }
+
+  // Convert to nicely formatted plain text
+  const textContent = `
+=== Issue: ${issue.title} ===
+
+Name: ${issue.name}
+Type: ${issue._type}
+Deadline: ${issue.deadline}
+Labels: ${(issue.labels || []).join(', ')}
+
+Command:
+${(issue.expected_command || []).join('\n')}
+
+Materials:
+${(issue.expected_materials || []).map(mat => `- [${mat.rule}] ${mat.pattern}`).join('\n')}
+
+Products:
+${(issue.expected_products || []).map(prod => `- [${prod.rule}] ${prod.pattern}`).join('\n')}
+`;
+
+  res.setHeader('Content-Type', 'text/plain');
+  res.setHeader('Content-Disposition', `attachment; filename=issue-${issueId}.txt`);
+  res.send(textContent);
+};

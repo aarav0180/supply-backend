@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 require('dotenv').config();
@@ -10,7 +11,11 @@ require('dotenv').config();
 // Middlewares
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({
+  origin: 'http://localhost:5173',   // 👈 MUST be explicit (no '*')
+  credentials: true                  // 👈 Allow cookies
+}));
 
 //console.log("MongoDB URI:", process.env.DATABASE);
 

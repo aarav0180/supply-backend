@@ -4,8 +4,9 @@ const { errorHandler } = require('../helpers/deberrorHandler');
 
 // Middleware: Verify JWT token
 exports.requireSignin = (req, res, next) => {
-  const token = req.headers.authorization && req.headers.authorization.split(" ")[1];  // Get token from the Authorization header
-  console.log('Authorization Header:', req.headers.authorization); // Log Authorization header to verify token
+  console.log('Authorization Header:', req.cookies); // Log Authorization header to verify token
+  const token = req.cookies.token;  // Get token from the Authorization header
+  console.log('Authorization Header:', req.cookies.token); // Log Authorization header to verify token
   
   if (!token) {
     console.log('Error: No token provided');

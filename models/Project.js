@@ -1,14 +1,26 @@
 const mongoose = require('mongoose');
-const IssueSchema = require('./Issue');
+const IssueSchema = require('./Issue'); // Assuming IssueSchema is in the same directory
+const { Schema } = mongoose;
 
-const ProjectSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  organization: { type: String, required: true },
-  creator: { type: String, required: true },
-  contributors: [{ type: String }],
-  issues: [IssueSchema],
+const ProjectSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  organization: {
+    type: String,
+    required: true,
+  },
+  creator: {
+    type: String,
+    required: true,
+  },
+  contributors: {
+    type: [String],
+    default: [],
+  },
+  issues: [IssueSchema]  ,
 }, { timestamps: true });
 
-const Project = mongoose.model('Project', ProjectSchema);
+module.exports = mongoose.model('Project', ProjectSchema);
 
-module.exports = Project;
